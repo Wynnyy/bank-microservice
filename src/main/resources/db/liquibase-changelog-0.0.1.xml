@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1728586088429-1" author="michal">
+        <createTable tableName="customer">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_customer"/>
+            </column>
+            <column name="customer" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sur_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nationality" type="VARCHAR(255)"/>
+            <column name="date_of_birth" type="DATETIME"/>
+            <column name="card_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_issue" type="DATETIME"/>
+            <column name="date_of_expiry" type="DATETIME"/>
+            <column name="sex" type="VARCHAR(255)"/>
+        </createTable>
+        <addUniqueConstraint columnNames="card_number" constraintName="uc_customer_card_number" tableName="customer"/>
+    </changeSet>
+
+    <changeSet id="1728572031572-1" author="michal">
+        <createTable tableName="account">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_account"/>
+            </column>
+            <column name="iban" type="VARCHAR(24)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(255)"/>
+            <column name="balance" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_id" type="BIGINT"/>
+        </createTable>
+        <addUniqueConstraint columnNames="iban" constraintName="uc_account_iban" tableName="account"/>
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="account" constraintName="FK_ACCOUNT_ON_CUSTOMER" referencedColumnNames="id" referencedTableName="customer"/>
+        <createSequence sequenceName="account_seq" startValue="1" incrementBy="50"/>
+    </changeSet>
+
+
+    <changeSet  id="1728571935527-1" author="michal">
+        <createTable tableName="transfer">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_transfer"/>
+            </column>
+            <column name="date" type="DATETIME">
+            </column>
+            <column name="amount" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="debtor_iban" type="VARCHAR(24)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creditor_iban" type="VARCHAR(24)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="VARCHAR(255)"/>
+            <column name="account_id" type="BIGINT"/>
+        </createTable>
+        <createSequence sequenceName="transfer_seq" startValue="1" incrementBy="50"/>
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="transfer"
+                                 constraintName="FK_TRANSFER_ON_ACCOUNT" referencedColumnNames="id"
+                                 referencedTableName="account"/>
+    </changeSet>
+
+    <changeSet  id="1728572547475-1" author="michal">
+        <insert tableName="customer">
+            <column name="id" value="1"/>
+            <column name="customer" value="classic"/>
+            <column name="name" value="Peter"/>
+            <column name="sur_name" value="Sladecek"/>
+            <column name="card_number" valueNumeric="457576756"/>
+            <column name="nationality" value="SLOVAKIA"/>
+            <column name="date_of_birth" valueDate="1990-06-10"/>
+            <column name="date_of_issue" valueDate="2022-01-01"/>
+            <column name="date_of_expiry" valueDate="2027-01-01"/>
+            <column name="sex" value="MALE"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1728574990505-1" author="michal">
+        <insert tableName="account">
+            <column name="id" valueNumeric="1"/>
+            <column name="iban" value="SK3112000000198742637541"/>
+            <column name="balance" valueNumeric="4557.20"/>
+            <column name="currency" value="EUR"/>
+            <column name="customer_id" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1728575045718-1" author="michal">
+        <insert tableName="account">
+            <column name="id" valueNumeric="2"/>
+            <column name="iban" value="SK3155000000198742637547"/>
+            <column name="balance" valueNumeric="7898.99"/>
+            <column name="currency" value="EUR"/>
+            <column name="customer_id" valueNumeric="1"/>
+        </insert>
+    </changeSet>
+
+
+</databaseChangeLog>
